@@ -1,0 +1,61 @@
+Video source:
+    
+    https://www.youtube.com/watch?v=Fcj6DQT3nVA&list=PL0Zuz27SZ-6PrE9srvEn8nbhOOyxnWXfp&index=8&ab_channel=DaveGray
+
+Створимо 3 компоненти - Header,Content,Footer
+
+Замість кнопки "delete" встановимо пакет реакт-іконок:
+
+    npm i react-icons -D
+    (npm i react-icons --save)
+
+Пропишемо кнопку для зміни стану checkbox:
+
+    const handleCheck = (id) => {
+        const listItems = items.map((item) => item.id === id ? {...item, checked: !item.checked} : item)
+        setItems(listItems)
+    };
+
+    Тут ми створюємо новий масив з доп. map, де перевіряємо, чи переданий id = id в списку, і якщо так, то замінюємо статус  checked на протилежний, а якщо id не спывпадають, то залишаэмо як є. І після цього 
+    перезаписуємо наш масив items з допомогою setItems (хук useState)
+
+В наш input передамо подію onChange, яка передаватиме id цього поля в функцію:
+
+    <input
+        type="checkbox"
+        checked={item.checked}
+    ->  onChange={()=> handleCheck(item.id)}
+    />
+
+Так як ми використовуємо наш масив, а не операції в API, щоб при перезапуску наш список не мінявся на дефолтний, додамо наші зміни у localStorage: 
+
+    const handleCheck = (id) => {
+        const listItems = items.map((item) => item.id === id ? {...item, checked: !item.checked} : item)
+        setItems(listItems);
+    ->  localStorage.setItem("shoppingList",JSON.stringify(listItems))
+    };
+
+Додамо умову для стилю, щоб коли елемент checked, текст закреслювався:
+
+    <label style={(item.checked) ? {textDecoration: 'line-throught'} : null}>
+
+І пропишемо функціонал для кнопки видалення:
+
+    const handleDelete = (id) => {
+        const listItems = items.filter((item) => item.id !== id);
+        setItems(listItems);
+        localStorage.setItem("shoppingList",JSON.stringify(listItems))
+    }
+
+Та передамо функцію в подію клік для нашої іконки видалення:
+
+    <FaTrashAlt
+        role="button"
+        tabIndex="0"
+    ->  onClick={()=> handleDelete(item.id)}
+    />
+
+
+
+
+
