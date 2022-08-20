@@ -8,9 +8,11 @@ import Footer from './Footer';
 const App = () => {
   return (
     <div>
+
       <Header/>
       <Content/>
       <Footer/>
+      
     </div>
   );
 };
