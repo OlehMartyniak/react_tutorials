@@ -1,4 +1,113 @@
 Video source: 
-    https://www.youtube.com/watch?v=XyIXMQ9SZmI&list=PL0Zuz27SZ-6PrE9srvEn8nbhOOyxnWXfp&index=11&ab_channel=DaveGray
+    https://www.youtube.com/watch?v=r5ombQn3fHY&list=PL0Zuz27SZ-6PrE9srvEn8nbhOOyxnWXfp&index=9&ab_channel=DaveGray  
 
-Просто перемістили функції і масив в Арр і прокинули пропси з батьківських в дочірні елементи   
+Перенести react-icons з devDependencies просто в dependencies (помилка на попередньому занятті):
+    npm i react-icons --save-prod
+
+Створимо компонент AddItem, де у нас буде знаходитись форма і кнопка, яка буде додавати нове поле до наших покупок:
+
+    const AddItem = () => {
+    return (
+        <form className='AddForm'>
+            {/* <label htmlFor='addItem'>Add Item</label> */}
+            <input
+                autoFocus
+                id='addItem'
+                type='text'
+                placeholder='Add Item'
+                required
+            />
+            <button type='submit' aria-label='Add Item'>
+                <FaPlus/>
+            </button>
+        </form>
+    )
+    }
+
+В Арр створимо змінну, де буде записуватись інформація з форми і функцію для запису (використаємо useState):
+
+    const [newItem,setNewItem] = useState('');
+
+Також потрібно створити функцію, яка буде приймати і передавати подію форми - handleSubmit:
+
+    const handleSubmit = (e) => {
+    console.log('submitted');
+    }
+І потрібно тепер через батьківський елемент передати ці функції дочірньому (і прийняти відповідно, дестрктувавши):
+
+    <AddItem newItem={newItem} setNewItem={setNewItem} handleSubmit={handleSubmit}/>
+
+В AddItem додамо:
+
+    в форму:    onSubmit={handleSubmit}
+
+    в інпут:    value={newItem}
+                onChange={(e) => setNewItem(e.target.value)
+
+Додамо деякий функціонал в  handleSubmit, а саме скажемо, що якщо  newItem немає, тоді ми повернемо функцію  і викличемо setNewItem(""), що дозволить очистити форму після підтвердження (а не залишати в ній введений текст):
+
+    const handleSubmit = (e) => {
+    e.preventDefault();
+    if (!newItem) return;
+    addItem(newItem)                 <- це поле додамо пізніше, коли пропишемо ф-цію addItem
+    setNewItem('')
+    };
+
+Тепер потрібно створити функцію, яка генеруватиме новий id, новий об'єкт і новий масив для доданих елементів:
+
+    const addItem = (item) => {
+    const id = items.length ? items[items.length - 1].id + 1 : 1;
+    const myNewItem = { id, checked: false, item};
+    const listItems = [...items, myNewItem];
+    setAndSaveItems(listItems)        <- це поле додамо пізніше, коли пропишемо ф-цію setAndSaveItems
+    };
+
+Також ми часто використовували код для запису даних в localStorage. Створимо функцію для цього, щоб замінити нею повторюваний код:
+
+    const setAndSaveItems = (newItems) => {
+    setItems(newItems);
+    localStorage.setItem("shoppingList",JSON.stringify(newItems))
+    };    
+
+До цього ми виводили наш створений масив groceryList, який незалежно від дій наших функцій обновлявся коли ми обновляли сторінку. Тепер ми можемо створювати, записувати і виводити поля з localStorage, тому в useState, замінимо масив з groceryList на інформацію отриману з localStorage:
+
+    const [items,setItems] = useState(JSON.parse(localStorage.getItem("shoppingList")));
+
+
+
+
+                    Пошук
+
+Тепер наша ціль -  пошук елементів списку. Однак шукати ми будемо не при натисканні, а вже в процесі написання.
+Для цього створимо компонент SearchItem:
+
+    <form className="searchForm" onSubmit={(e) => e.preventDefault()}>
+        {/* <label htmlFor="search">Search</label> */}
+        <input
+            type="text"
+            id="search"
+            role="searchbox"
+            placeholder="Seatch Items"
+            value="search"           <- це поле додамо, коли пропишемо ф-цію search               
+            onChange={(e) => setSearch(e.target.value)} <- це поле додамо, коли пропишемо ф-цію setSearch
+        />
+    </form>
+
+Пропишемо useState для нашого пошуку, передамо через батьківський в дочірній SearchItem:
+
+    const [search,setSearch] = useState('');
+
+Тепер додамо можливість пошуку інформації, записаної в нашому search серед списку покупок; для цього змінимо параметри <Content/>:
+
+      <Content
+        items={items.filter(item => ((item.item).toLowerCase()).includes(search.toLowerCase()))}    <- змінюєм
+        setItems={setItems}
+        handleCheck={handleCheck}
+        handleDelete={handleDelete}
+      />
+
+
+
+
+
+
