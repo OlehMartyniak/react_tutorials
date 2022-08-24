@@ -3,13 +3,13 @@ import ItemList from "./ItemList";
 const Content = ({items,handleCheck,handleDelete}) => {
 
     return (
-        <main>
+        <div>
             {items.length ? (
                 <ItemList items={items} handleCheck={handleCheck} handleDelete={handleDelete}/>
             ) : (
-                <p style={{margin: "50px 0",color:"grey"}}>Your List is empty</p>
+                <p style={{margin: "50px 10px",color:"grey"}}>Your List is empty</p>
             )}
-        </main>
+        </div>
     );
 };
 

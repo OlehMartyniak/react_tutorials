@@ -39,16 +39,6 @@ header {
   align-items: center;
 }
 
-main {
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  flex-grow: 1;
-  justify-content: flex-start;
-  align-items: center;
-  overflow-y: auto;
-}
-
 footer {
   width: 100%;
   padding: 0.25em;
@@ -147,5 +137,9 @@ ul li::before {
   border-radius: 3px;
   border: 2px solid lightgray;
   color: gray;
+}
+p {
+  text-align: center;
+  margin: 25px 10px;
 }
 
