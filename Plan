@@ -1,34 +1,40 @@
+import { dblClick } from "@testing-library/user-event/dist/click"
+
 Video source:
-    https://www.youtube.com/watch?v=j3vk0FW71DM&list=PL0Zuz27SZ-6PrE9srvEn8nbhOOyxnWXfp&index=18&ab_channel=DaveGray
+    https://www.youtube.com/watch?v=_Fx6GDuIo1A&list=PL0Zuz27SZ-6PrE9srvEn8nbhOOyxnWXfp&index=14&ab_channel=DaveGray
 
-По стандарту useEffect викликається щоразу коли компонент рендериться (щось у ньому змінюється).
-Однак частіше за все useEffect використовують з масивом залежності. І якщо він порожній, то useEffect буде відпрацьовувати лише коли сторінка завантажується, а якщо в цей масив залежності додати певну змінну, то він буде відпрацьовувати коли міняється ця змінна
+Створимо папку data, куди додамо файл db.json :
 
-В ідеалі, якщо б ми працювали з АРІ, то ідеальним способом використати useEffect було б:
+    { 
+        "items": [
+            {
+                "id": 1,
+                "checked": false,
+                "item": "Tomatoes"
+            },
+            {
+                "id": 2,
+                "checked": false,
+                "item": "Orange Juice"
+            },
+            {
+                "id": 3,
+                "checked": false,
+                "item": "Ice-Cream"
+            }
+        ]
+    }
 
-1) Замінити хук з нашим масивом покупок:
+Відкрити нове вікно терміналу (bash) і ввести команду :
 
-    const [items,setItems] = useState([]);
+    npx json-server -p 3500 -w data/db.json
 
-2) Перенести функцію виведення даних з локал сторедж в useEffect:
+    (npx - node package executer, -p - port, -w - watch)
 
-    useEffect (()=> {
-    setItems(JSON.parse(localStorage.getItem("shoppingList")))
-    },[])
+Тепер можна працювати як і з іншим сервером (get/put/delete)  
+Відобразити інфу : localhost:3500/items  
 
-Але так як у нас немає АРІ, то потрібно використати додатковий функціонал:
-
-Список покупок за замовчуванням буде або виведений з локал сторедж, або, якщо його ще там не створено, буде просто порожнім (щоб не ламати додаток, наприклад ф-ція filter видаватиме помилку якщо локал сторедж порожній)
-
-    const [items,setItems] = useState(JSON.parse(localStorage.getItem("shoppingList")) || [])
-
-Функцію setAndSaveItems видалимо, а функціонал перенесемо в useEffect (однак додамо в масив залежності наші items, щоб він щоразу коли вони мінятимуться зберігав їх у локал сторедж):
-
-    useEffect (()=> {
-    localStorage.setItem("shoppingList",JSON.stringify(items))
-    },[items]);
-
-А у функції addItem, handleCheck, handleDelete, додамо setItems(listItems) замість видаленого setAndSaveItems(listItems)    
+ 
 
 
 
