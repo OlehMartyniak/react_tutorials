@@ -1,0 +1,77 @@
+
+Video source:
+    https://www.youtube.com/watch?v=XYrNkTkx8Uc&list=PL0Zuz27SZ-6PrE9srvEn8nbhOOyxnWXfp&index=14&ab_channel=DaveGray
+
+Створимо apiRequest.js, де пропишемо try/catch запис і вивід помилки:
+
+    const apiRequest = (url = "", optionsObj = null, errMsg = null) => {
+        try {
+            const response = await fetch(url,optionsObj);
+            if (!response.ok) throw Error("Please reload the app")
+        } catch (err) {
+            errMsg = err.message;
+        } finally {
+            return errMsg;
+        }
+    };
+
+Перше де ми будемо використовувати apiRequest буде addItem в Арр; там ми вже оновлюємо стан масиву з покупками,
+однак щоб обновити інформацію на нашому локальному сервері (data/db.json) використаємо apiRequest:
+
+Для нових елементів списку додамо метод "POST" в ф-цію addItem (і додамо async при виклику):
+
+    const addItem = async (item) => {
+    const id = items.length ? items[items.length - 1].id + 1 : 1;
+    const myNewItem = { id, checked: false, item};
+    const listItems = [...items, myNewItem];
+    setItems(listItems);
+
+->{ const postOptions = {
+        method: "POST",
+        headers: {
+        "Content-Type": "application/json"
+        },
+        body: JSON.stringify(myNewItem)
+    }
+    const result = await apiRequest(API_URL, postOptions);
+    if (result) setFetchError(result)
+->} };
+
+(Тепер, коли ми додаватимемо новий елемент до списку покупок, він буде додаватись у список нашого локального
+сервера в data/db.json)  
+
+Для зміни статусу "checked" додамо метод "PATCH" ф-ції handleCheck, який мінятиме тільки окремий елемент 
+в масиві (і додамо async при виклику):
+
+    const handleCheck = async (id) => {
+    const listItems = items.map((item) => item.id === id ? {...item, checked: !item.checked} : item);
+    setItems(listItems);
+
+->{ const myItem = listItems.filter((item) => item.id === id);
+    const updateOptions = {
+        method: "PATCH",
+        headers: {
+        "Content-Type": "application/json"
+        },
+        body: JSON.stringify({checked: myItem[0].checked})
+    };
+    const reqUrl = `${API_URL}/${id}`;
+    const result = await apiRequest(reqUrl, updateOptions);
+    if (result) setFetchError(result);
+->} };
+
+Для видалення елементів додамо метод "DELETE" ф-ції handleDelete, який видалятиме елемент і з масиву і 
+з нашого локального сервера (і додамо async при виклику):
+
+    const handleDelete = async (id) => {
+    const listItems = items.filter((item) => item.id !== id);
+    setItems(listItems);
+
+->{ const deleteOptions = { method: "DELETE" };
+    const reqUrl = `${API_URL}/${id}`;
+    const result = await apiRequest(reqUrl,deleteOptions);
+    if (result) setFetchError(result);
+->} };
+
+
+
