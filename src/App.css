@@ -1,1 +1,20 @@
-
+button {
+    height: 50px;
+    width: 200px;
+}
+.selectedBtn {
+    color: white;
+    background: black;
+}
+.btnForm {
+    display: flex;
+    justify-content: center;
+    position: fixed;
+    margin-left: 25%;
+    margin-bottom: 100px;
+}
+.ulList {
+    overflow-y: auto;
+    padding-top: 80px;
+    
+}
